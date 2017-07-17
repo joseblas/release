@@ -1,0 +1,4 @@
+{
+    "jenkins":"https://ci.example.com",
+    "git":"git@github.com:yourOrg"
+}
