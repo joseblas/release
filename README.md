@@ -4,7 +4,7 @@ https://github.com/hmrc/release
 ```
 
 # Improvements
- 1. No need to download the project to release/tag. Done remotely in GihHub.
+ 1. No need to download the project to release/tag. Done remotely in GitHub.
  2. Use of native Python Libs for GitHub and Jenkins.
  3. Creates a pipeline to tag, build and deploy the app in several Envs (only QA by now)
 
@@ -13,12 +13,13 @@ https://github.com/hmrc/release
 This repo provides a script that allows to tag a git repository:
 
 It looks if the specified build completed successfully
-Gets the commit id from the build
-Suggests you the new version
-Tags the repository
+1. Gets the commit id from the build
+2. Suggests you the new version
+3. Tags the repository
 ## Prepare the environment
 
 Set up your local configuration by creating a file ~/.hmrc/release.conf which is a json formatted file that should look like this:
+```
 {
     "jenkins":"https://ci-dev...",
     "jenkins_build": "https://ci-build...",
@@ -32,7 +33,7 @@ Set up your local configuration by creating a file ~/.hmrc/release.conf which is
     "jenkins_build_key": "<build-key>",
     "jenkins_qa_key": "<QA-key>"
 }
-
+```
 
 In addition to that you need some python libraries (setup pip and virtualenv if needed)
 $ virtualenv virtual_release
