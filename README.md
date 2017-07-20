@@ -35,6 +35,9 @@ Set up your local configuration by creating a file ~/.hmrc/release.conf which is
 }
 ```
 
+How to create Git token:
+ Add repo and admin:org profiles
+
 In addition to that you need some python libraries (setup pip and virtualenv if needed)
 $ virtualenv virtual_release
 $ source virtual_release/bin/activate
@@ -42,7 +45,8 @@ $ pip install -r requirements.txt
 
 Release
 
-./bin/mdtp.py 'app'
+./bin/mdtp.py release 'app'
+./bin/mdtp.py deploy  'app' 'version'
 
 License
 
