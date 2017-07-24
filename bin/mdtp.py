@@ -21,9 +21,9 @@ if operation == 'release' or operation == 'deploy':
     staging = DeployTo('Staging')
 
     if operation == 'release':
-        nTag = create_git_release(app)
+        nTag = create_git_release(app, conf)
         print "New Tag: {0}".format(nTag)
-        run_build(app, nTag)
+        run_build(app, nTag, conf, verbose)
     else:
         nTag = args.version
 
@@ -34,8 +34,13 @@ if operation == 'release' or operation == 'deploy':
 
     if qa:
         print("deploying to QA")
-        executor.submit(deployQA(app, nTag))
+        executor.submit(deploy_qa(app, nTag, conf))
 
     if staging:
         print("deploying to Staging")
-        executor.submit(deployStaging(app, nTag))
+        executor.submit(deploy_staging(app, nTag, conf))
+
+if operation == 'db-status':
+    qa = Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key)
+    # prod = Jenkins(conf.jenkins_prod, conf.jenkins_user, conf.jenkins_prod_key)
+    execute(conf, 'curl-microservice-active',"-X GET https://portal-db-test.public-monolith.mdtp/connectivity/{0}".format(app), qa)

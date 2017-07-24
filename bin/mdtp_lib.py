@@ -12,7 +12,7 @@ from requests import HTTPError
 import lib
 
 
-def create_git_release(job):
+def create_git_release(job, conf):
     tagger = InputGitAuthor(conf.git_username, conf.git_email)
     github = conf.github_api
     gh = Github(base_url=github, login_or_token=conf.git_token)
@@ -62,7 +62,31 @@ def run_build(job, tag, conf, verbose):
     time.sleep(30)
 
 
-def deployQA(job, tag, conf):
+def execute(conf, job, args, env):
+
+
+    print env.get_job(job).get_last_good_build()
+    try:
+        env.build_job(job, {"ARGS": args})
+    except HTTPError, ex:
+        print("Error?: %s" % (ex.message))
+
+    newJobNumber = env[job].get_last_buildnumber() + 1
+    print "Job {0} is being built".format(newJobNumber)
+
+    last_completed = env[job].get_last_completed_buildnumber()
+    while (last_completed != newJobNumber):
+        print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
+        time.sleep(5)
+        last_completed = env[job].get_last_completed_buildnumber()
+
+    output = env[job].get_build(newJobNumber).get_console()
+    print output
+
+    print "Job completed"
+
+
+def deploy_qa(job, tag, conf):
     QA = Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key)
     print "Deploy Microservice in QA"
 
@@ -85,7 +109,7 @@ def deployQA(job, tag, conf):
     print "Job (QA) completed"
 
 
-def deployStaging(job, tag, conf):
+def deploy_staging(job, tag, conf):
     microservice='deploy-microservice-multiactive'
     Staging = Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key)
     print "Deploy Microservice in Staging " + Staging.version
