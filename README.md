@@ -45,9 +45,11 @@ $ pip install -r requirements.txt
 
 Release
 
-./bin/mdtp.py release 'app'
-./bin/mdtp.py deploy  'app' 'version'
+./bin/mdtp.py release 'app' 'env'
+./bin/mdtp.py deploy  'app' 'version' 'env'
 
+
+'env' could be: dev, qa, staging or prod
 License
 
 This code is open source software licensed under the Apache 2.0 License.

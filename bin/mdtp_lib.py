@@ -86,49 +86,51 @@ def execute(conf, job, args, env):
     print "Job completed"
 
 
-def deploy_qa(job, tag, conf):
-    QA = Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key)
+def deploy_qa(job, tag, conf, env):
+    # QA = Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key)
     print "Deploy Microservice in QA"
 
-    print QA.get_job('deploy-microservice').get_last_good_build()
+    print env.get_job('deploy-microservice').get_last_good_build()
 
     try:
-        QA.build_job('deploy-microservice', {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
+        env.build_job('deploy-microservice', {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
     except HTTPError, ex:
         print("Error?: %s" % (ex.message))
 
-    newJobNumber = QA['deploy-microservice'].get_last_buildnumber() + 1
+    newJobNumber = env['deploy-microservice'].get_last_buildnumber() + 1
     print "Job {0} is being built".format(newJobNumber)
 
-    last_completed = QA['deploy-microservice'].get_last_completed_buildnumber()
+    last_completed = env['deploy-microservice'].get_last_completed_buildnumber()
     while (last_completed != newJobNumber):
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(30)
-        last_completed = QA['deploy-microservice'].get_last_completed_buildnumber()
+        last_completed = env['deploy-microservice'].get_last_completed_buildnumber()
 
     print "Job (QA) completed"
 
 
-def deploy_staging(job, tag, conf):
+def deploy_staging(job, tag, conf, env):
     microservice='deploy-microservice-multiactive'
-    Staging = Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key)
-    print "Deploy Microservice in Staging " + Staging.version
+    # Staging = Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key)
+    print "Deploy Microservice in Staging " + env.version
+    print "Deploy Microservice in Staging " + job
+    print "Deploy Microservice in Staging {0}".format(tag)
 
-    print Staging.get_job(microservice).get_last_good_build()
+    print env.get_job(microservice).get_last_good_build()
 
     try:
-        Staging.build_job(microservice, {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
+        env.build_job(microservice, {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
     except HTTPError, ex:
         print("Error?: %s" % (ex.message))
 
-    newJobNumber = Staging[microservice].get_last_buildnumber() + 1
+    newJobNumber = env[microservice].get_last_buildnumber() + 1
     print "Job {0} is being built".format(newJobNumber)
 
-    last_completed = Staging[microservice].get_last_completed_buildnumber()
+    last_completed = env[microservice].get_last_completed_buildnumber()
     while (last_completed != newJobNumber):
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(30)
-        last_completed = Staging[microservice].get_last_completed_buildnumber()
+        last_completed = env[microservice].get_last_completed_buildnumber()
 
     print "Job (Staging) completed"
 
@@ -139,6 +141,7 @@ def parseArguments():
     parser.add_argument('operation', type=str, help='Operation to perform: Release And Deploy OR deploy-only')
     parser.add_argument('projectName', type=str, help='The jenkins build of the repo we want to tag')
     parser.add_argument('version', nargs='?', type=str, help='The jenkins build of the repo we want to tag')
+    parser.add_argument('env', nargs='?', type=str, help='Environment to deploy')
     args = parser.parse_args()
     return args
 
