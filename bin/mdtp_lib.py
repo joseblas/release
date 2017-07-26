@@ -101,7 +101,7 @@ def deploy_qa(job, tag, conf, env):
     print "Job {0} is being built".format(newJobNumber)
 
     last_completed = env['deploy-microservice'].get_last_completed_buildnumber()
-    while (last_completed != newJobNumber):
+    while last_completed < newJobNumber:
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(30)
         last_completed = env['deploy-microservice'].get_last_completed_buildnumber()
@@ -127,7 +127,7 @@ def deploy_staging(job, tag, conf, env):
     print "Job {0} is being built".format(newJobNumber)
 
     last_completed = env[microservice].get_last_completed_buildnumber()
-    while (last_completed != newJobNumber):
+    while last_completed < newJobNumber:
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(30)
         last_completed = env[microservice].get_last_completed_buildnumber()
