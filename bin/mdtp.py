@@ -20,8 +20,7 @@ print verbose
 J = {
     'dev': Jenkins(conf.jenkins, conf.jenkins_user, conf.jenkins_key),
     'qa': Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key),
-    'staging': Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key),
-    'prod': Jenkins(conf.jenkins_prod, conf.jenkins_user, conf.jenkins_prod_key)
+    'staging': Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key)
 }
 
 if operation == 'release' or operation == 'deploy':
