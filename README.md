@@ -24,6 +24,7 @@ Set up your local configuration by creating a file ~/.hmrc/release.conf which is
     "jenkins":"https://ci-dev...",
     "jenkins_build": "https://ci-build...",
     "jenkins_qa": "https://deploy-qa...",
+    "jenkins_staging": "https://deploy-staging...",
     "github_api": "https://github.../api/v3",
     "git_username": "jose-taboada",
     "git_email": "jose.taboada@...",
@@ -31,7 +32,8 @@ Set up your local configuration by creating a file ~/.hmrc/release.conf which is
     "jenkins_user":"jose.taboada",
     "jenkins_key":"<dev-key>",
     "jenkins_build_key": "<build-key>",
-    "jenkins_qa_key": "<QA-key>"
+    "jenkins_qa_key": "<QA-key>",
+    "jenkins_qa_key": "<Staging-key>"
 }
 ```
 

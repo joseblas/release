@@ -37,7 +37,7 @@ if operation == 'release' or operation == 'deploy':
         run_build(app, nTag, conf, verbose)
 
 
-    executor = ThreadPoolExecutor(max_workers=2)
+    executor = ThreadPoolExecutor(max_workers=4)
 
     if qa:
         print("deploying to QA")
