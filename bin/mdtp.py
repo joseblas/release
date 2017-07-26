@@ -25,7 +25,7 @@ J = {
 
 if operation == 'release' or operation == 'deploy':
 
-    if verbose:
+    if verbose and operation == 'deploy':
         print "Version to deploy/release: " + nTag
 
     qa = DeployTo('QA')
@@ -36,16 +36,14 @@ if operation == 'release' or operation == 'deploy':
         print "New Tag: {0}".format(nTag)
         run_build(app, nTag, conf, verbose)
 
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        if qa:
+            print("deploying to QA")
+            executor.submit(deploy_qa(app, nTag, conf, J['qa']))
 
-    executor = ThreadPoolExecutor(max_workers=4)
-
-    if qa:
-        print("deploying to QA")
-        executor.submit(deploy_qa(app, nTag, conf, J['qa']))
-
-    if staging:
-        print("deploying to Staging")
-        executor.submit(deploy_staging(app, nTag, conf, J['staging']))
+        if staging:
+            print("deploying to Staging")
+            executor.submit(deploy_staging(app, nTag, conf, J['staging']))
 
 if operation == 'db-status':
     # qa = Jenkins(conf.jenkins_qa, conf.jenkins_user, conf.jenkins_qa_key)

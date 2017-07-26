@@ -27,6 +27,7 @@ def create_git_release(job, conf):
         return "0.1.0"
     else:
         last_tag = repo.get_tags()[0]
+        print "last tag {0}".format(last_tag)
         current_version = re.search(r'release/\s*([\d.]+)', last_tag.name).group(1)
         newVersion = lib.read_user_preferred_version(job, current_version)
         releaseMessage = "releasing version release/{0} of vat-core".format(newVersion)
@@ -52,7 +53,7 @@ def run_build(job, tag, conf, verbose):
     print "Job {0} is being built".format(newJobNumber)
 
     last_completed = J[job].get_last_completed_buildnumber()
-    while (last_completed != newJobNumber):
+    while last_completed < newJobNumber:
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(25)
         last_completed = J[job].get_last_completed_buildnumber()
@@ -95,7 +96,8 @@ def deploy_qa(job, tag, conf, env):
     try:
         env.build_job('deploy-microservice', {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
     except HTTPError, ex:
-        print("Error?: %s" % (ex.message))
+        print " Job launched..."
+        # print("Error?: %s" % (ex.message))
 
     newJobNumber = env['deploy-microservice'].get_last_buildnumber() + 1
     print "Job {0} is being built".format(newJobNumber)
@@ -105,12 +107,13 @@ def deploy_qa(job, tag, conf, env):
         print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
         time.sleep(30)
         last_completed = env['deploy-microservice'].get_last_completed_buildnumber()
+        print env['deploy-microservice'].get_build(newJobNumber).is_running
 
     print "Job (QA) completed"
 
 
 def deploy_staging(job, tag, conf, env):
-    microservice='deploy-microservice-multiactive'
+    microservice = 'deploy-microservice-multiactive'
     # Staging = Jenkins(conf.jenkins_staging, conf.jenkins_user, conf.jenkins_staging_key)
     print "Deploy Microservice in Staging " + env.version
     print "Deploy Microservice in Staging " + job
@@ -121,14 +124,15 @@ def deploy_staging(job, tag, conf, env):
     try:
         env.build_job(microservice, {"APP": job, "VERSION": tag, "DEPLOYMENT_BRANCH": "master"})
     except HTTPError, ex:
-        print("Error?: %s" % (ex.message))
+        print " Job launched..."
+        # print("Error?: %s" % (ex.message))
 
-    newJobNumber = env[microservice].get_last_buildnumber() + 1
-    print "Job {0} is being built".format(newJobNumber)
+    new_job_number = env[microservice].get_last_buildnumber() + 1
+    print "Job {0} is being built".format(new_job_number)
 
     last_completed = env[microservice].get_last_completed_buildnumber()
-    while last_completed < newJobNumber:
-        print "Waiting for completion of Job {0}, {1}".format(newJobNumber, last_completed)
+    while last_completed < new_job_number:
+        print "Waiting for completion of Job {0}, {1}".format(new_job_number, last_completed)
         time.sleep(30)
         last_completed = env[microservice].get_last_completed_buildnumber()
 
